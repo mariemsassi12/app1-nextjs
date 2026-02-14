@@ -17,7 +17,7 @@ export default function Home() {
       const res = await fetch('/api/health')
       const data = await res.json()
       setHealth(data)
-    } catch (error) { console.error(error) }
+    } catch (error) { console.error('Health check failed', error) }
   }
 
   const fetchUsers = async () => {
@@ -42,73 +42,83 @@ export default function Home() {
       if (data.success) {
         setFormData({ email: '', name: '' })
         fetchUsers()
-        alert('User created!')
+        alert('User created successfully!')
       }
     } finally { setLoading(false) }
   }
 
- return (
-  <main className="min-h-screen bg-white p-8 text-slate-900">
-    <div className="max-w-4xl mx-auto">
-      {/* Title m-dhakh-em */}
-      <h1 className="text-4xl font-extrabold mb-8 text-blue-800 border-b pb-4">
-        User Management System
-      </h1>
-      
-      {/* Health Status */}
-      {health && (
-        <div className="bg-emerald-50 p-4 mb-8 rounded-xl border-2 border-emerald-200 text-emerald-800 shadow-sm">
-          <span className="font-bold">✓ System Status:</span> {health.status} 
-          <span className="ml-4 opacity-70">| Uptime: {health.uptime.toFixed(2)}s</span>
-        </div>
-      )}
+  return (
+    <main className="min-h-screen bg-slate-50 p-8 text-slate-900">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-black mb-8 text-blue-800 border-b-4 border-blue-200 pb-2">
+          Full-Stack Dashboard
+        </h1>
+        
+        {/* Health Status Banner */}
+        {health && (
+          <div className="bg-emerald-100 p-4 mb-8 rounded-xl border-2 border-emerald-300 text-emerald-800 shadow-sm flex items-center gap-2">
+            <span className="text-xl">✓</span>
+            <span className="font-bold uppercase tracking-wider text-sm">System Status: {health.status}</span>
+            <span className="ml-auto text-xs opacity-70">Uptime: {Math.floor(health.uptime)}s</span>
+          </div>
+        )}
 
-      {/* Form Section */}
-      <div className="bg-slate-50 p-8 rounded-2xl shadow-md border border-slate-200 mb-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-6">Add New User</h2>
-        <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input 
-            className="bg-white border-2 border-slate-300 p-3 rounded-lg w-full text-slate-900 placeholder:text-slate-400 focus:border-blue-500 outline-none transition" 
-            type="email" placeholder="Email Address" required
-            value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})}
-          />
-          <input 
-            className="bg-white border-2 border-slate-300 p-3 rounded-lg w-full text-slate-900 placeholder:text-slate-400 focus:border-blue-500 outline-none transition" 
-            type="text" placeholder="Full Name"
-            value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})}
-          />
-          <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-lg shadow-lg transition-all active:scale-95 disabled:bg-slate-400" disabled={loading}>
-            {loading ? 'Adding...' : 'Add User'}
-          </button>
-        </form>
-      </div>
+        {/* Features List (أهم النقاط في مشروعك) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 className="text-xl font-bold mb-4 text-slate-800">Active Features</h2>
+            <ul className="space-y-2 text-sm text-slate-600 font-medium">
+              <li className="flex items-center gap-2">✅ Serverless API (/api/users)</li>
+              <li className="flex items-center gap-2">✅ Edge Geo-Location</li>
+              <li className="flex items-center gap-2">✅ PostgreSQL + Prisma ORM</li>
+              <li className="flex items-center gap-2">✅ Web Vitals Monitoring</li>
+              <li className="flex items-center gap-2">✅ Security Headers (CSP)</li>
+            </ul>
+          </div>
 
-      {/* List Section */}
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        <div className="bg-slate-800 p-4">
-          <h2 className="text-xl font-bold text-white">Users List ({users.length})</h2>
+          {/* Add User Form */}
+          <div className="bg-white p-6 rounded-2xl shadow-md border-t-4 border-blue-600">
+            <h2 className="text-xl font-bold mb-4">Add New User</h2>
+            <form onSubmit={handleCreateUser} className="space-y-3">
+              <input 
+                className="w-full border-2 border-slate-200 p-2 rounded-lg outline-none focus:border-blue-500 transition" 
+                type="email" placeholder="Email Address" required
+                value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+              <input 
+                className="w-full border-2 border-slate-200 p-2 rounded-lg outline-none focus:border-blue-500 transition" 
+                type="text" placeholder="Full Name"
+                value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})}
+              />
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition active:scale-95" disabled={loading}>
+                {loading ? 'Processing...' : 'Create User'}
+              </button>
+            </form>
+          </div>
         </div>
-        <ul className="divide-y divide-slate-200">
-          {users.length === 0 ? (
-            <li className="p-8 text-center text-slate-500 italic">No users found yet.</li>
-          ) : (
-            users.map(u => (
-              <li key={u.id} className="p-5 flex justify-between items-center hover:bg-slate-50 transition">
-                <div className="flex flex-col">
-                  <span className="text-lg font-bold text-slate-900">{u.name || 'Anonymous User'}</span>
-                  <span className="text-blue-600 font-medium">{u.email}</span>
+
+        {/* User List Table */}
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+          <div className="bg-slate-800 p-4">
+            <h2 className="text-lg font-bold text-white flex justify-between">
+              Database Records <span>Total: {users.length}</span>
+            </h2>
+          </div>
+          <ul className="divide-y divide-slate-100">
+            {users.map(u => (
+              <li key={u.id} className="p-4 flex justify-between items-center hover:bg-slate-50">
+                <div>
+                  <p className="font-bold text-slate-800">{u.name || 'Anonymous'}</p>
+                  <p className="text-sm text-blue-600">{u.email}</p>
                 </div>
-                <div className="text-right">
-                  <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">
-                    Joined: {new Date(u.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
+                <span className="text-xs font-semibold text-slate-400">
+                  {new Date(u.createdAt).toLocaleDateString()}
+                </span>
               </li>
-            ))
-          )}
-        </ul>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
-  </main>
-)
+    </main>
+  )
 }

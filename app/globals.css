@@ -5,12 +5,20 @@
   --foreground: #171717;
 }
 
-/* Na77ina el Dark Mode media query bech may-sirouch machakel */
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: white !important;
+  color: #171717 !important;
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
+}
+
+h1, h2, h3 {
+  color: #1e40af !important; /* Blue-800 */
+}
+
+
+input {
+  color: #1e293b !important;
+  background-color: white !important;
 }
