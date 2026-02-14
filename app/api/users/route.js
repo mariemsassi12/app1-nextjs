@@ -1,17 +1,18 @@
 import { PrismaClient } from '@prisma/client'
 
+// Hada el Prisma Client bech ya7ki m3a Neon Database
 const prisma = globalThis.__prisma || (globalThis.__prisma = new PrismaClient())
 
 export async function GET(request) {
   try {
     const users = await prisma.user.findMany({
-      include: {
-        posts: true,
-      },
+      // Na77ina el include posts khater fasa-kht-ha
       take: 10,
+      orderBy: {
+        createdAt: 'desc', // Bech y-jiblek ekher users t-zadou
+      }
     })
 
-    // Add cache headers
     return new Response(
       JSON.stringify({
         success: true,
@@ -22,7 +23,7 @@ export async function GET(request) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120', // ISR Cache
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
         },
       }
     )
@@ -49,6 +50,7 @@ export async function POST(request) {
       )
     }
 
+    // Create user fi el database
     const user = await prisma.user.create({
       data: { email, name },
     })
@@ -74,4 +76,3 @@ export async function POST(request) {
     )
   }
 }
-
